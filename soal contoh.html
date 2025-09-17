@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz Pilihan Ganda - Dasar-Dasar Akuntansi</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial,Helvetica,sans-serif}
+    body{background:#f5f7fb;margin:0;padding:24px;display:flex;justify-content:center}
+    .card{width:100%;max-width:900px;background:#fff;border-radius:12px;box-shadow:0 6px 20px rgba(15,23,42,.08);padding:24px}
+    h1{font-size:20px;margin:0 0 8px}
+    p.lead{color:#475569;margin-top:0}
+    .q{margin-top:18px;padding:14px;border-radius:8px;border:1px solid #eef2ff;background:linear-gradient(180deg,#fff,#fbfcff)}
+    .q h3{margin:0 0 8px;font-size:16px}
+    .options{display:flex;flex-direction:column;gap:8px}
+    label.option{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;border:1px solid transparent;cursor:pointer}
+    input[type="radio"]{width:18px;height:18px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+    button{background:#0ea5a4;border:none;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
+    button.secondary{background:#64748b}
+    .result{margin-top:16px;padding:14px;border-radius:8px;background:#eef2ff}
+    .correct{color:#065f46;font-weight:600}
+    .wrong{color:#7f1d1d;font-weight:600}
+    .explain{margin-top:6px;color:#334155}
+    .answer-key{margin-top:12px}
+    footer{margin-top:20px;color:#64748b;font-size:13px}
+    @media (max-width:600px){.card{padding:16px}}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Quiz: Dasar-Dasar Akuntansi (Pilihan Ganda)</h1>
+    <p class="lead">Pilih jawaban yang paling tepat. Setelah selesai klik <strong>Periksa Jawaban</strong>.</p>
+
+    <form id="quizForm">
+      <!-- Questions inserted by JavaScript -->
+    </form>
+
+    <div class="controls">
+      <button id="checkBtn">Periksa Jawaban</button>
+      <button type="button" class="secondary" id="showKeyBtn">Tampilkan Kunci</button>
+      <button type="button" class="secondary" id="resetBtn">Ulangi</button>
+    </div>
+
+    <div id="result" class="result" style="display:none"></div>
+
+    <div id="answerKey" class="answer-key" style="display:none"></div>
+
+    <footer>Disusun: Quiz sederhana untuk mapel Dasar-Dasar Akuntansi. Bisa diedit sesuai kebutuhan.</footer>
+  </div>
+
+<script>
+const questions = [
+  {
+    id:1,
+    q: 'Persamaan dasar akuntansi yang benar adalah...',
+    options: ['Harta = Utang + Modal', 'Pendapatan = Beban + Laba', 'Aset = Biaya + Modal', 'Hutang = Modal + Beban'],
+    answer: 0,
+    explain: 'Persamaan dasar akuntansi: Harta (Aset) = Utang (Liabilitas) + Modal (Ekuitas).'
+  },
+  {
+    id:2,
+    q: 'Ketika perusahaan menerima kas dari penjualan jasa, akun yang bertambah adalah...',
+    options: ['Beban', 'Pendapatan', 'Kas dan Pendapatan', 'Utang'],
+    answer: 2,
+    explain: 'Kas bertambah (debit) dan Pendapatan juga dicatat (kredit) sehingga kedua akun bertambah secara bersamaan.'
+  },
+  {
+    id:3,
+    q: 'Beban gaji yang masih harus dibayar dicatat sebagai...',
+    options: ['Aset', 'Modal', 'Utang', 'Pendapatan'],
+    answer: 2,
+    explain: 'Beban yang belum dibayar menjadi kewajiban (utang) sampai dibayar.'
+  },
+  {
+    id:4,
+    q: 'Akun yang termasuk aset lancar adalah...',
+    options: ['Tanah', 'Peralatan', 'Piutang usaha', 'Utang bank jangka panjang'],
+    answer: 2,
+    explain: 'Piutang usaha biasanya akan terealisasi dalam jangka dekat sehingga termasuk aset lancar.'
+  },
+  {
+    id:5,
+    q: 'Jika perusahaan membeli peralatan tunai, maka pencatatannya adalah...',
+    options: ['Debit Peralatan, Kredit Kas', 'Debit Kas, Kredit Peralatan', 'Debit Beban, Kredit Modal', 'Debit Utang, Kredit Kas'],
+    answer: 0,
+    explain: 'Pembelian peralatan dengan kas mengurangi kas dan menambah akun peralatan.'
+  },
+  {
+    id:6,
+    q: 'Depresiasi merupakan alokasi biaya atas...',
+    options: ['Beban operasional harian', 'Penurunan nilai persediaan', 'Perolehan pendapatan', 'Pemakaian aset tetap selama masa manfaatnya'],
+    answer: 3,
+    explain: 'Depresiasi mengalokasikan biaya perolehan aset tetap ke periode-periode yang menggunakan aset tersebut.'
+  },
+  {
+    id:7,
+    q: 'Jurnal untuk mencatat penerimaan uang muka dari pelanggan (belum jadi pendapatan) adalah...',
+    options: ['Debit Kas, Kredit Pendapatan', 'Debit Kas, Kredit Utang Pendapatan (Pendapatan Diterima Di Muka)', 'Debit Piutang, Kredit Pendapatan', 'Debit Beban, Kredit Kas'],
+    answer: 1,
+    explain: 'Uang muka yang belum menjadi hak pendapatan dicatat sebagai kewajiban (pendapatan diterima di muka).'
+  },
+  {
+    id:8,
+    q: 'Modal akhir perusahaan jika Harta = Rp 200.000 dan Utang = Rp 80.000 adalah...',
+    options: ['Rp 280.000', 'Rp 120.000', 'Rp 80.000', 'Rp 200.000'],
+    answer: 1,
+    explain: 'Modal = Harta - Utang = 200.000 - 80.000 = 120.000.'
+  },
+  {
+    id:9,
+    q: 'Akun yang menunjukkan penurunan kekayaan perusahaan karena aktivitas usaha disebut...',
+    options: ['Aset', 'Beban', 'Pendapatan', 'Modal'],
+    answer: 1,
+    explain: 'Beban mengurangi laba dan akibatnya mengurangi modal.'
+  },
+  {
+    id:10,
+    q: 'Laporan keuangan yang menunjukkan posisi keuangan pada suatu saat adalah...',
+    options: ['Laporan Laba Rugi', 'Arus Kas', 'Neraca (Balance Sheet)', 'Laporan Perubahan Modal'],
+    answer: 2,
+    explain: 'Neraca menunjukkan posisi Harta, Utang, dan Modal pada tanggal tertentu.'
+  }
+];
+
+function renderQuiz(){
+  const form = document.getElementById('quizForm');
+  form.innerHTML = '';
+  questions.forEach((item, idx) =>{
+    const div = document.createElement('div');
+    div.className = 'q';
+    div.innerHTML = `
+      <h3>Soal ${idx+1}. ${item.q}</h3>
+      <div class="options">
+        ${item.options.map((opt,i)=>{
+          return `<label class="option"><input type="radio" name="q${item.id}" value="${i}"> <span>${String.fromCharCode(65+i)}. ${opt}</span></label>`
+        }).join('')}
+      </div>
+    `;
+    form.appendChild(div);
+  });
+}
+
+function checkAnswers(){
+  let score = 0;
+  const total = questions.length;
+  const resultDiv = document.getElementById('result');
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = '';
+  const answers = [];
+
+  questions.forEach(q =>{
+    const sel = document.querySelector(`input[name='q${q.id}']:checked`);
+    const chosen = sel ? Number(sel.value) : null;
+    const isCorrect = chosen === q.answer;
+    if(isCorrect) score++;
+    answers.push({id:q.id, chosen, correct:q.answer, explain:q.explain});
+  });
+
+  resultDiv.innerHTML = `<strong>Nilai: ${score} / ${total}</strong><div class="explain">Klik "Tampilkan Kunci" untuk melihat jawaban benar dan penjelasan tiap soal.</div>`;
+  // highlight selected answers
+  // show per-question feedback
+  document.getElementById('answerKey').style.display = 'none';
+}
+
+function showAnswerKey(){
+  const keyDiv = document.getElementById('answerKey');
+  keyDiv.style.display = 'block';
+  keyDiv.innerHTML = '';
+  questions.forEach((q, idx)=>{
+    const block = document.createElement('div');
+    block.style.padding = '10px';
+    block.style.borderRadius = '8px';
+    block.style.marginTop = '8px';
+    block.style.background = '#ffffff';
+    block.style.border = '1px solid #eef2ff';
+
+    const chosen = document.querySelector(`input[name='q${q.id}']:checked`);
+    const chosenVal = chosen ? Number(chosen.value) : null;
+    const correct = q.answer;
+    const isCorrect = chosenVal === correct;
+
+    block.innerHTML = `<strong>Soal ${idx+1}.</strong> Jawaban benar: <span class="correct">${String.fromCharCode(65+correct)}. ${q.options[correct]}</span>` +
+      (chosenVal === null ? `<div class="explain">Kamu belum memilih jawaban untuk soal ini.</div>` :
+      (isCorrect ? `<div class="explain correct">Benar — ${q.explain}</div>` : `<div class="explain wrong">Salah — pilihanmu: ${String.fromCharCode(65+chosenVal)}. ${q.options[chosenVal]}<br>${q.explain}</div>`));
+
+    keyDiv.appendChild(block);
+  });
+}
+
+function resetQuiz(){
+  document.getElementById('quizForm').reset();
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('answerKey').style.display = 'none';
+}
+
+// initialize
+renderQuiz();
+
+// event listeners
+document.getElementById('checkBtn').addEventListener('click', function(e){
+  e.preventDefault();
+  checkAnswers();
+});
+
+document.getElementById('showKeyBtn').addEventListener('click', function(){
+  showAnswerKey();
+});
+
+document.getElementById('resetBtn').addEventListener('click', function(){
+  resetQuiz();
+});
+
+</script>
+</body>
+</html>
